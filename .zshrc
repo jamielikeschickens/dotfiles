@@ -16,7 +16,7 @@ ZSH_THEME="jamie"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git emoji)
+plugins=(git emoji aws kubectl kubectx)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -45,3 +45,18 @@ alias icloud="cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/"
 # https://www.atlassian.com/git/tutorials/dotfiles
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+
+# Datavant specific zshrc
+source ~/.datavant.zshrc
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
+
+export PYENV_VIRTUALENV_DISABLE_PROMPT=0
+
+export PATH=$HOME/.cargo/bin:$PATH
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

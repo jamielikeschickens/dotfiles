@@ -12,6 +12,8 @@ Stored as part of .config folder under iTerm
 `brew install tmux`
 `brew install ripgrep`
 `brew install fd`
+`brew install node`
+`brew install wget`
 
 # Install lazy plugin manager
 

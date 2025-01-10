@@ -10,6 +10,10 @@ function user_at_host() {
 	echo "%{$fg[cyan]%}%n@%{$fg[blue]%}%m%"
 }
 
+function timestamp() {
+    echo "%${fg[cyan]%}%D{%L:%M:%S}%"
+}
+
 function print_cwd() {
 	echo "%{$fg_bold[yellow]%}%~%{$reset_color%}"
 }
@@ -28,5 +32,5 @@ ZSH_THEME_RVM_PREFIX="%{$fg_bold[red]%}"
 ZSH_THEME_RVM_SUFFIX="%{$reset_color%}"
 ZLE_RPROMPT_INDENT=0
 
-PROMPT='$(get_smiley) $(user_at_host)\:$(print_cwd)$(parse_git_branch)$ '
+PROMPT='$(get_smiley) $(timestamp) $(print_cwd)$(parse_git_branch)$ '
 #RPROMPT='$ZSH_THEME_VIRTUALENV_PREFIX$(virtualenv_prompt_info)$ZSH_THEME_VIRTUALENV_SUFFIX $ZSH_THEME_RVM_PREFIX$(rvm-prompt)$ZSH_THEME_RVM_SUFFIX'

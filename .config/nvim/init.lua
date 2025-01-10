@@ -11,6 +11,17 @@ vim.keymap.set("n", "<Leader>bn", ":bn<cr>")
 vim.keymap.set("n", "<Leader>bp", ":bp<cr>")
 vim.keymap.set("n", "<Leader>bd", ":bd<cr>")
 
+-- Open a split with the go to definition
+local function go_to_definition_split()
+  vim.cmd('rightbelow vsplit')
+  vim.lsp.buf.definition()
+end
+vim.keymap.set('n', 'gds', go_to_definition_split)
+
+
+-- Copy the current file path to paste register
+vim.keymap.set("n", "<Leader>cp", ':let @" = expand("%")<cr>')
+
 -- Easy to hide search highlight after searching
 vim.keymap.set("n", "<Leader><cr>", ":noh<cr>")
 
@@ -61,7 +72,7 @@ require("lazy").setup(
     { "ms-jpq/coq.thirdparty", branch="3p" },
     { "nvim-treesitter/nvim-treesitter", config=treesitter_config, build=':TSUpdate' },
     "sainnhe/sonokai",
-    { 'nvim-telescope/telescope.nvim', tag = '0.1.1',
+    { 'nvim-telescope/telescope.nvim', tag = '0.1.5',
       dependencies = { 'nvim-lua/plenary.nvim' }
       },
       { "nvim-tree/nvim-tree.lua",
@@ -77,22 +88,35 @@ require("lazy").setup(
     { "akinsho/bufferline.nvim" },
     { "jose-elias-alvarez/null-ls.nvim",
         dependencies = { "nvim-lua/plenary.nvim" }
+    },
+    { "zbirenbaum/copilot.lua", config=function() require("copilot").setup({}) end},
+    { "PedramNavid/dbtpal" },
+    { "NeogitOrg/neogit",
+      dependencies = {
+        "nvim-lua/plenary.nvim",         -- required
+        "sindrets/diffview.nvim",        -- optional - Diff integration
+        "nvim-telescope/telescope.nvim", -- optional
+      },
+      config = {
+            kind="auto"
+        }
     }
 })
 
 -- null-ls setup for formatting
 local null_ls = require("null-ls")
 local null_ls_sources = {
-    null_ls.builtins.formatting.prettier.with({
-        extra_args = function(params)
-            return params.options
-            and params.options.tabSize
-            and {
-                "--tab-width",
-                params.options.tabSize,
-            }
-        end,
-    }),
+--    null_ls.builtins.formatting.prettier.with({
+--        extra_args = function(params)
+--            return params.options
+--            and params.options.tabSize
+--            and {
+--                "--tab-width",
+--                params.options.tabSize,
+--            }
+--        end,
+--    }),
+    null_ls.builtins.formatting.black
 }
 
 null_ls.setup({
@@ -119,12 +143,13 @@ vim.keymap.set("", "<Leader>bf", function() vim.lsp.buf.format({ async = false }
 -- mason setup for installing lsp configurations
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "tsserver", "dockerls", "jsonls", "marksman", "jedi_language_server" },
+    ensure_installed = { "ts_ls", "dockerls", "jsonls", "marksman", "jedi_language_server" },
 }
 
 local coq = require("coq")
-require("lspconfig").jedi_language_server.setup(coq.lsp_ensure_capabilities())
-require("lspconfig").tsserver.setup{}
+local lspconfig = require('lspconfig')
+lspconfig.jedi_language_server.setup(coq.lsp_ensure_capabilities())
+lspconfig.ts_ls.setup{}
 
 -- lsp keybinding
 -- Use LspAttach autocommand to only map the following keys
@@ -164,6 +189,7 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+vim.keymap.set('n', '<leader>ft', builtin.treesitter, {})
 
 -- Settings for nvim-tree
 -- Stop netrw from being loaded vim's default file explorer
@@ -178,5 +204,21 @@ require('lualine').setup()
 
 -- bufferline setup
 require("bufferline").setup{}
+
+-- terminal mode remaps
+vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true }) -- escape, escapes terminal mode
+
+-- remap so Ctrl-R behaviour works
+function _G.escape_and_insert_char()
+  local char = vim.fn.nr2char(vim.fn.getchar())
+  return '<C-\\><C-N>"' .. char .. 'pi'
+end
+vim.api.nvim_set_keymap(
+  't',
+  '<C-R>',
+  'v:lua.escape_and_insert_char()',
+  { expr = true, noremap = true, silent = true }
+)
+
 
 
