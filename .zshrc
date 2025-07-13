@@ -16,7 +16,7 @@ ZSH_THEME="jamie"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git emoji aws kubectl kubectx)
+plugins=(git emoji aws kubectl kubectx direnv)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -60,3 +60,5 @@ export PATH=$HOME/.cargo/bin:$PATH
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+
